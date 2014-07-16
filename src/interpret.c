@@ -4037,6 +4037,7 @@ void mark_apply_low_cache() {
 }
 #endif
 
+#ifdef CALL_OTHER_TYPE_CHECK
 void check_co_args2 (unsigned short *types, int num_arg, const char *name, const char *ob_name, int sparg){
   int argc = sparg;
   int exptype, i = 0;
@@ -4076,7 +4077,6 @@ void check_co_args2 (unsigned short *types, int num_arg, const char *name, const
 }
 
 void check_co_args (int num_arg, const program_t * prog, function_t * fun, int findex) {
-#ifdef CALL_OTHER_TYPE_CHECK
   if(num_arg != fun->num_arg){
     char buf[1024];
     //if(!current_prog) what do i need this for again?
@@ -4103,8 +4103,8 @@ void check_co_args (int num_arg, const program_t * prog, function_t * fun, int f
      prog->type_start[findex] != INDEX_START_NONE)
     check_co_args2(&prog->argument_types[prog->type_start[findex]], num_arg,
                    fun->funcname, prog->filename, num_arg);
-#endif
 }
+#endif
 
 
 int apply_low (const char * fun, object_t * ob, int num_arg)
@@ -4187,8 +4187,10 @@ int apply_low (const char * fun, object_t * ob, int num_arg)
          * the cache will tell us in which program the function is,
          * and where
          */
+#ifdef CALL_OTHER_TYPE_CHECK
         if(!(funflags & FUNC_VARARGS))
           check_co_args(num_arg, entry->progp, funp, findex);
+#endif
 
         push_control_stack(FRAME_FUNCTION | FRAME_OB_CHANGE);
         current_prog = entry->progp;
@@ -4268,9 +4270,10 @@ int apply_low (const char * fun, object_t * ob, int num_arg)
       need = (local_call_origin == ORIGIN_DRIVER ? DECL_HIDDEN : ((current_object == ob || local_call_origin == ORIGIN_INTERNAL) ? DECL_PROTECTED : DECL_PUBLIC));
 
       if ((funflags & DECL_ACCESS) >= need) {
-
+#ifdef CALL_OTHER_TYPE_CHECK
         if(!(funflags & FUNC_VARARGS))
           check_co_args(num_arg, prog, funp, findex);
+#endif
 
         push_control_stack(FRAME_FUNCTION | FRAME_OB_CHANGE);
         current_prog = prog;
