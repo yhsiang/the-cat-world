@@ -343,6 +343,7 @@ void call_heart_beat()
 	object_t *ob;
 	heart_beat_t *curr_hb;
 	error_context_t econ;
+	int user_stage = 1;
 
 	current_interactive = 0;
 
@@ -351,49 +352,56 @@ void call_heart_beat()
 		heart_beat_index = 0;
 		save_context(&econ);
 		while (1) {
-			ob = (curr_hb = &heart_beats[heart_beat_index])->ob;
-			DEBUG_CHECK(!(ob->flags & O_HEART_BEAT),
-					"Heartbeat not set in object on heartbeat list!");
-			/* is it time to do a heart beat ? */
-			curr_hb->heart_beat_ticks--;
+			if (user_stage ? (ob->interactive ? 1 : 0) : (ob->interactive ? 0 : 1)) {
+				ob = (curr_hb = &heart_beats[heart_beat_index])->ob;
+				DEBUG_CHECK(!(ob->flags & O_HEART_BEAT),
+						"Heartbeat not set in object on heartbeat list!");
+				/* is it time to do a heart beat ? */
+				curr_hb->heart_beat_ticks--;
 
-			if (ob->prog->heart_beat != 0) {
-				if (curr_hb->heart_beat_ticks < 1) {
-					object_t *new_command_giver;
-					curr_hb->heart_beat_ticks = curr_hb->time_to_heart_beat;
-					current_heart_beat = ob;
-					new_command_giver = ob;
+				if (ob->prog->heart_beat != 0) {
+					if (curr_hb->heart_beat_ticks < 1) {
+						object_t *new_command_giver;
+						curr_hb->heart_beat_ticks = curr_hb->time_to_heart_beat;
+						current_heart_beat = ob;
+						new_command_giver = ob;
 #ifndef NO_SHADOWS
-					while (new_command_giver->shadowing)
-						new_command_giver = new_command_giver->shadowing;
+						while (new_command_giver->shadowing)
+							new_command_giver = new_command_giver->shadowing;
 #endif
 #ifndef NO_ADD_ACTION
-					if (!(new_command_giver->flags & O_ENABLE_COMMANDS))
-						new_command_giver = 0;
+						if (!(new_command_giver->flags & O_ENABLE_COMMANDS))
+							new_command_giver = 0;
 #endif
 #ifdef PACKAGE_MUDLIB_STATS
-					add_heart_beats(&ob->stats, 1);
+						add_heart_beats(&ob->stats, 1);
 #endif
-					set_eval(max_cost);
+						set_eval(max_cost);
 
-					if (SETJMP(econ.context)) {
-						restore_context(&econ);
-					} else {
-						save_command_giver(new_command_giver);
-						if(ob->interactive) //note, NOT same as new_command_giver
-							current_interactive = ob;
-						call_direct(ob, ob->prog->heart_beat - 1,
-								ORIGIN_DRIVER, 0);
-						current_interactive = 0;
-						pop_stack(); /* pop the return value */
-						restore_command_giver();
+						if (SETJMP(econ.context)) {
+							restore_context(&econ);
+						} else {
+							save_command_giver(new_command_giver);
+							if(ob->interactive) //note, NOT same as new_command_giver
+								current_interactive = ob;
+							call_direct(ob, ob->prog->heart_beat - 1,
+									ORIGIN_DRIVER, 0);
+							current_interactive = 0;
+							pop_stack(); /* pop the return value */
+							restore_command_giver();
+						}
+
+						current_object = 0;
 					}
-
-					current_object = 0;
 				}
 			}
 			if (++heart_beat_index == num_hb_to_do)
-				break;
+				if (user_stage) {
+					user_stage = 0;
+					heart_beat_index = 0;
+				} else {
+					break;
+				}
 		}
 		pop_context(&econ);
 		if (heart_beat_index < num_hb_to_do)
