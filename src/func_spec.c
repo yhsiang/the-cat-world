@@ -263,6 +263,7 @@ void message(mixed, mixed, string | string * | object | object *,
     mixed *sort_array(mixed *, int | string | function, ...);
     void throw(mixed);
     int time();
+    int time_millis();
     mixed *unique_array(mixed *, string | function, void | mixed);
     mapping unique_mapping(mixed *, string | function, ...);
     string *deep_inherit_list(object default:F__THIS_OBJECT);

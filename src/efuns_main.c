@@ -3525,6 +3525,16 @@ f_time (void)
 }
 #endif
 
+#ifdef F_TIME_MILLIS
+void
+f_time_millis (void)
+{
+    struct timeval curTime;
+    gettimeofday(&curTime, NULL);
+    push_number((curTime.tv_sec * 1000) + (curTime.tv_usec / 1000));
+}
+#endif
+
 #ifdef F__TO_FLOAT
 void
 f__to_float (void)
