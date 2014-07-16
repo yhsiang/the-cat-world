@@ -399,6 +399,7 @@ void ipc_remove()
 	debug_message("closed external ports\n");
 }
 
+#ifndef NO_IP_DEMON
 void init_addr_server (char * hostname, int addr_server_port)
 {
 #ifdef WIN32
@@ -519,6 +520,7 @@ void init_addr_server (char * hostname, int addr_server_port)
 	WSACleanup();
 #endif
 }
+#endif
 
 /*
  * If there is a shadow for this object, then the message should be
