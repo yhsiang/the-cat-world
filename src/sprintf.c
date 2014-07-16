@@ -561,27 +561,14 @@ static void add_justified (const char * str, int slen, pad_info_t * pad,
                              int fs, format_info finfo, short int trailing)
 {
 #ifdef USE_ICONV
-    int skip = 0;
-    int wide = 0;
     const char *p2 = str + slen;
-    while (p2 > str){
-    	if((*p2) & 0x80){
-    		wide = 1;
-    		skip++;
-    	}else{
-    		if(wide){
-    			wide = 0;
-    			skip--;
-    		}
-    	}
-    	p2--;
+    while (--p2 >= str){
+        if((*p2 & 0xFF) > 0xC0){
+            fs++;
+        }
     }
-    if(wide)
-    	skip--;
-    fs -= (slen - skip);
-#else
-    fs -= slen;
 #endif
+    fs -= slen;
     if (fs <= 0) {
         add_nstr(str, slen);
     } else {
@@ -640,19 +627,28 @@ static int add_column (cst ** column, int trailing)
             space = done;
 #ifdef USE_ICONV
         if(c & 0x80){
-        	if(!(col_d[done+1] & 0x80) )
+        	if(!(c & 0x40))
         		width++;
         } else {
         	width++;
         }
         done++;
         if (width == col->pres) {
+            if(col_d[done] & 0x80){
+                while(!(col_d[done] & 0x40)){
+                    done--;
+                }
+            }
 #else
         if (++done == col->pres) {
 #endif
             if (space != -1) {
                 c = col_d[done];
+#ifdef USE_ICONV
+                if (c != '\n' && c != ' ' && c && !(c & 0x80))
+#else
                 if (c != '\n' && c != ' ' && c)
+#endif
                     done = space;
             }
             break;
@@ -704,19 +700,26 @@ static int add_table (cst ** table)
         end = tab_d[i + 1].start - tab_di - 1;
 #ifdef USE_ICONV
         width = 0;
+        tabwidth = 0;
 #endif
         for (done = 0; done != end && tab_di[done] != '\n'; done++)
 #ifdef USE_ICONV
         {
         	if(tab_di[done] & 0x80){
-        		if(!(tab_di[done+1] & 0x80) )
+        		if(!(tab_di[done] & 0x40))
         			width++;
         	} else
         		width++;
-        	if(width == tab->size)
-        		tabwidth = done+1;
+        	if(width == tab->size){
+        		tabwidth = done;
+        		if(tab_di[tabwidth] & 0x80){
+        			while(!(tab_di[tabwidth] & 0x40)){
+        				tabwidth--;
+        			}
+        		}
+        	}
         }
-        add_justified(tab_di, (width > tab->size ? tabwidth : done),
+        add_justified(tab_di, (width >= tab->size ? tabwidth : done),
                               tab->pad, tab->size, tab->info,
                               tab->pad || (i < tab->nocols - 1) || tab->next);
 #else
@@ -760,25 +763,17 @@ static int get_curpos() {
     p2 = p1;
 #ifdef USE_ICONV
     int skip = 0;
-    int wide = 0;
-    while (p2 > sprintf_state->obuff.buffer && *p2 != '\n'){
+    while (p2 >= sprintf_state->obuff.buffer && *p2 != '\n'){
     	if((*p2) & 0x80){
-    		wide = 1;
-    		skip++;
-    	}else{
-    		if(wide){
-    			wide = 0;
+    		if((*p2) & 0x40){
     			skip--;
+    		}else{
+    			skip++;
     		}
     	}
     	p2--;
     }
-    if(wide)
-    	skip--;
-    if (*p2 != '\n')
-      return p1 - p2 + 1 - skip;
-    else
-      return p1 - p2 - skip;
+    return p1 - p2 - skip;
 #else
     while (p2 > sprintf_state->obuff.buffer && *p2 != '\n')
         p2--;
@@ -1110,7 +1105,7 @@ char *string_print_formatted (const char * format_str, int argc, svalue_t * argv
                                 ADD_CHAR('\n');
                             }
                         } else {/* (finfo & INFO_TABLE) */
-                            unsigned int n, len, max_len;
+                            unsigned int n, len, max_len, cnt = 0;
                             const char *p1, *p2;
 
 #define TABLE carg->u.string
@@ -1126,18 +1121,24 @@ char *string_print_formatted (const char * format_str, int argc, svalue_t * argv
                             p2 = p1 = TABLE;
                             while (*p1) {
                                 if (*p1 == '\n') {
-                                    if (p1 - p2 > max_len)
-                                        max_len = p1 - p2;
+                                    if (p1 - p2 - cnt > max_len)
+                                        max_len = p1 - p2 - cnt;
+                                    cnt = 0;
                                     p1++;
                                     if (*(p2 = p1))
                                         n++;
-                                } else
+                                } else {
+#ifdef USE_ICONV
+                                    if ((*p1 & 0xC0) == 0xC0)
+                                        cnt++;
+#endif
                                     p1++;
+                                }
                             }
                             if (!pres) {
                                 /* the null terminated word */
-                                if (p1 - p2 > max_len)
-                                    max_len = p1 - p2;
+                                if (p1 - p2 - cnt > max_len)
+                                    max_len = p1 - p2 - cnt;
                                 pres = fs / (max_len + 2); /* at least two
                                                             * separating spaces */
                                 if (!pres)
@@ -1204,12 +1205,18 @@ char *string_print_formatted (const char * format_str, int argc, svalue_t * argv
 			            if(pres){
 			            	for(i=0; i<slen && width != pres; i++)
 			            		if(tmp[i] & 0x80){
-			            			if(!(tmp[i+1] & 0x80))
+			            			if(!(tmp[i] & 0x40))
 			            				width++;
 			            		} else
 			            			width++;
-			            	if(width == pres)
+			            	if(width == pres){
+			            		if(tmp[i] & 0x80){
+			            			while(!(tmp[i] & 0x40)){
+			            				i--;
+			            			}
+			            		}
 			            		slen = i;
+			            	}
 			            }
 #else
                         if (pres && pres < slen)
