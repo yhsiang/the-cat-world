@@ -794,14 +794,14 @@ int flush_message (interactive_t * ip)
 #endif
 			if(ip->connection_type == PORT_WEBSOCKET && (ip->iflags & HANDSHAKE_COMPLETE)){
 				ip->out_of_band = 0;
-				//ok we're in trouble, we have to send the whole thing at once, otherwise we don't know the size!
-				//try to get away with only sending small chunks
-				int sendsize = length;
-				if(length > 125){
-					sendsize = 125;
+				int sendres, sendsize = length > 65535 ? 65535 : length;
+				if (sendsize > 125) {
+					unsigned int flags = htonl(sendsize | 0x827E0000);
+					sendres = send(ip->fd, &flags, 4, 0);
+				} else {
+					unsigned short flags = htons(sendsize | 0x8200);
+					sendres = send(ip->fd, &flags, 2, 0);
 				}
-				unsigned short flags = htons(sendsize | 0x8200); //82 is final packet (of this message) type binary
-				int sendres = send(ip->fd, &flags, 2, 0);
 				if(sendres <= 0)
 					return 1; //wait
 				if(sendres == 1) {
