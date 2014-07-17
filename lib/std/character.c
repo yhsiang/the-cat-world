@@ -8,7 +8,7 @@ private int command_hook(object, string);
 
 //------------------------------------------------------------------- variables
 
-private nosave string *paths = ({});
+private nosave string *paths = ({ "usr" });
 
 //------------------------------------------------------------------- functions
 
