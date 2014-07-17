@@ -15,6 +15,10 @@
 
 #define CHARACTER "/std/character"
 
+//---------------------------------------------------------------------- daemon
+
+#define LOGIN_D "/adm/daemons/login"
+
 //--------------------------------------------------------------------- feature
 
 #define F_DBASE "/feature/dbase"

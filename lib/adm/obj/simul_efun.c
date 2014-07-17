@@ -1,5 +1,6 @@
 //------------------------------------------------------------------ prototypes
 
+varargs string file_name(object, int);
 string trim(string);
 
 //------------------------------------------------------------------- variables
@@ -7,6 +8,64 @@ string trim(string);
 private nosave mixed null;
 
 //------------------------------------------------------------------- functions
+
+object assert_caller(mixed file) {
+    object caller = previous_object(1);
+
+    if (stringp(file)) {
+        if (file == file_name(caller, 1)) {
+            return caller;
+        }
+    } else if (objectp(file)) {
+        if (file == caller) {
+            return caller;
+        }
+    }
+
+    error("illegal function caller.");
+}
+
+//-----------------------------------------------------------------------------
+
+varargs string file_name(object ob, int flag) {
+    if (ob) {
+        string name = efun::file_name(ob);
+
+        if (flag && clonep(ob)) {
+            return name[0..(strsrch(name, '#', -1) - 1)];
+        } else {
+            return name;
+        }
+    }
+
+    return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+int is_chinese(string text) {
+    if (text) {
+        int width = strwidth(text);
+
+        if (width) {
+            int words = 0;
+
+            foreach (int code in str_to_arr(text)) {
+                if (0x4E00 <= code && code <= 0x9FA5) {
+                    ++words;
+                } else {
+                    break;
+                }
+            }
+
+            return (words == width) ? words : 0;
+        }
+    }
+
+    return 0;
+}
+
+//-----------------------------------------------------------------------------
 
 string *split(string text, string delimiter) {
     return text ? explode(text, delimiter) : ({});
