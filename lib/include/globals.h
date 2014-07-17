@@ -1,6 +1,19 @@
 #ifndef ___GLOBALS_H___
 #define ___GLOBALS_H___
 
+//------------------------------------------------------------------- directory
+
+#define DATA_DIR "/data/"
+
+//--------------------------------------------- non-inheritable standard object
+
+#define LOGIN_OB "/obj/login"
+#define USER_OB  "/obj/user"
+
+//------------------------------------------------- inheritable standard object
+
+#define CHARACTER "/std/character"
+
 //--------------------------------------------------------------------- feature
 
 #define F_DBASE "/feature/dbase"
