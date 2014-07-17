@@ -5,6 +5,7 @@ string creator_file(string filename) {
 
     switch (path[0]) {
         case "adm":
+        case "cmds":
             return ROOT_UID;
     }
 

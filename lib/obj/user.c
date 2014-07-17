@@ -21,6 +21,7 @@ string query_save_file() {
 
 void setup() {
     seteuid(getuid());
+    enable_character();
 }
 
 //----------------------------------------------------------- private functions

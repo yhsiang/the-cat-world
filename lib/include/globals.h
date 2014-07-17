@@ -18,7 +18,8 @@
 
 //---------------------------------------------------------------------- daemon
 
-#define LOGIN_D "/adm/daemons/login"
+#define COMMAND_D "/adm/daemons/command"
+#define LOGIN_D   "/adm/daemons/login"
 
 //--------------------------------------------------------------------- feature
 
