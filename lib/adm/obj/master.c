@@ -1,4 +1,16 @@
+//------------------------------------------------------------------- functions
+
+string creator_file(string filename) {
+    return SYSTEM_UID;
+}
+
 //----------------------------------------------------------- private functions
+
+private object connect() {
+    return new(LOGIN_OB);
+}
+
+//-----------------------------------------------------------------------------
 
 private string *epilog(int load_empty) {
     return read_config(CONFIG_DIR"preload");

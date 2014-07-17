@@ -23,6 +23,7 @@
 //--------------------------------------------------------------------- user ID
 
 #define BACKBONE_UID "BACKBONE"
+#define SYSTEM_UID   "SYSTEM"
 #define ROOT_UID     "ROOT"
 
 //-------------------------------------------------------------------- function

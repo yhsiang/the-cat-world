@@ -11,4 +11,10 @@ string query_save_file() {
     return (DATA_DIR"login/" + uid[0..0] + "/" + uid);
 }
 
+//----------------------------------------------------------- private functions
+
+private void net_dead() {
+    destruct();
+}
+
 //-----------------------------------------------------------------------------
