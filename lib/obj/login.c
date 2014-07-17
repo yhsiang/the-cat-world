@@ -3,6 +3,12 @@
 inherit F_DBASE;
 inherit F_SAVE;
 
+//----------------------------------------------------------------- constructor
+
+protected void create() {
+    seteuid(0);
+}
+
 //------------------------------------------------------------------- functions
 
 varargs void input(string property, int flag) {
@@ -17,6 +23,12 @@ string query_save_file() {
     string uid = getuid();
 
     return (DATA_DIR"login/" + uid[0..0] + "/" + uid);
+}
+
+//-----------------------------------------------------------------------------
+
+void setup() {
+    seteuid(getuid());
 }
 
 //----------------------------------------------------------- private functions
