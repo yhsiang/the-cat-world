@@ -11,6 +11,12 @@ protected void create() {
 
 //------------------------------------------------------------------- functions
 
+string query_id() {
+    return getuid();
+}
+
+//-----------------------------------------------------------------------------
+
 string query_save_file() {
     string uid = getuid();
 
@@ -34,6 +40,12 @@ private void net_dead() {
     }
 
     log_file("usage", getuid() + " disconnected");
+}
+
+//-----------------------------------------------------------------------------
+
+private void receive_message(string class, string message) {
+    receive(message);
 }
 
 //-----------------------------------------------------------------------------

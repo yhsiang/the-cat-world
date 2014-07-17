@@ -26,7 +26,11 @@ private int command_hook(object me, string arg) {
 
     command = COMMAND_D->find_command(verb, paths);
 
-    return command ? command->main(me, arg) : 0;
+    if (command && command->main(me, arg)) {
+        return 1;
+    }
+
+    return CHANNEL_D->do_channel(me, verb, arg);
 }
 
 //-----------------------------------------------------------------------------

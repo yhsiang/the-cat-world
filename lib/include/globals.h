@@ -18,6 +18,7 @@
 
 //---------------------------------------------------------------------- daemon
 
+#define CHANNEL_D "/adm/daemons/channel"
 #define COMMAND_D "/adm/daemons/command"
 #define LOGIN_D   "/adm/daemons/login"
 
@@ -48,6 +49,47 @@
 #define LT_YDAY   7
 #define LT_GMTOFF 8
 #define LT_ZONE   9
+
+//------------------------------------------------------------ ANSI escape code
+
+#define ESC   ""
+#define NOR   ESC"[0m"
+#define U     ESC"[4m"
+#define BLINK ESC"[5m"
+#define REV   ESC"[7m"
+
+//------------------------------------------------------------ foreground color
+
+#define BLK ESC"[22;30m"
+#define RED ESC"[22;31m"
+#define GRN ESC"[22;32m"
+#define YEL ESC"[22;33m"
+#define BLU ESC"[22;34m"
+#define MAG ESC"[22;35m"
+#define CYN ESC"[22;36m"
+#define WHT ESC"[22;37m"
+
+//--------------------------------------------- high intensity foreground color
+
+#define GRAY ESC"[1;30m"
+#define HIR  ESC"[1;31m"
+#define HIG  ESC"[1;32m"
+#define HIY  ESC"[1;33m"
+#define HIB  ESC"[1;34m"
+#define HIM  ESC"[1;35m"
+#define HIC  ESC"[1;36m"
+#define HIW  ESC"[1;37m"
+
+//------------------------------------------------------------ background color
+
+#define BBLK ESC"[40m"
+#define BRED ESC"[41m"
+#define BGRN ESC"[42m"
+#define BYEL ESC"[43m"
+#define BBLU ESC"[44m"
+#define BMAG ESC"[45m"
+#define BCYN ESC"[46m"
+#define BWHT ESC"[47m"
 
 //--------------------------------------------------------------- miscellaneous
 
