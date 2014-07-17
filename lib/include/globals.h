@@ -3,7 +3,8 @@
 
 //------------------------------------------------------------------- directory
 
-#define DATA_DIR "/data/"
+#define CONFIG_DIR "/adm/etc/"
+#define DATA_DIR   "/data/"
 
 //--------------------------------------------- non-inheritable standard object
 
@@ -30,7 +31,8 @@
 
 //--------------------------------------------------------------- miscellaneous
 
-#define NULL undefined_value()
+#define NULL                  undefined_value()
+#define read_config(filename) strip(split(read_file(filename),"\n"),'#')
 
 //-----------------------------------------------------------------------------
 
