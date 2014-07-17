@@ -2,13 +2,24 @@
 
 private nosave mapping tables = ([]);
 
+private nosave string *paths = ({
+    "std",
+    "usr",
+    "apr",
+    "wiz",
+    "arch",
+    "adm",
+});
+
 //------------------------------------------------------------------- functions
 
-object find_command(string verb, string *paths) {
+object find_command(int privilege, string verb) {
     mapping table;
     object command;
+    string path;
 
-    foreach (string path in paths) {
+    for (int i = privilege; i >= 0; --i) {
+        path = paths[i];
         table = tables[path];
 
         if (!table) {

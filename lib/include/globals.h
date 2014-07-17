@@ -18,9 +18,10 @@
 
 //---------------------------------------------------------------------- daemon
 
-#define CHANNEL_D "/adm/daemons/channel"
-#define COMMAND_D "/adm/daemons/command"
-#define LOGIN_D   "/adm/daemons/login"
+#define CHANNEL_D  "/adm/daemons/channel"
+#define COMMAND_D  "/adm/daemons/command"
+#define LOGIN_D    "/adm/daemons/login"
+#define SECURITY_D "/adm/daemons/security"
 
 //--------------------------------------------------------------------- feature
 
