@@ -26,6 +26,7 @@
 //--------------------------------------------------------------------- feature
 
 #define F_DBASE "/feature/dbase"
+#define F_MOVE  "/feature/move"
 #define F_SAVE  "/feature/save"
 
 //--------------------------------------------------------------------- user ID
