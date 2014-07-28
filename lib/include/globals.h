@@ -15,6 +15,7 @@
 //------------------------------------------------- inheritable standard object
 
 #define CHARACTER "/std/character"
+#define ROOM      "/std/room"
 
 //---------------------------------------------------------------------- daemon
 
