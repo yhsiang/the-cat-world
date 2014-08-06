@@ -11,6 +11,32 @@ protected void create() {
 
 //------------------------------------------------------------------- functions
 
+int id(string id) {
+    return (id == getuid());
+}
+
+//-----------------------------------------------------------------------------
+
+string long() {
+    return short(1) + "。\n";
+}
+
+//-----------------------------------------------------------------------------
+
+varargs string name(int raw) {
+    if (!raw) {
+        string applied = query_temp("apply/name");
+
+        if (applied) {
+            return applied;
+        }
+    }
+
+    return query("name");
+}
+
+//-----------------------------------------------------------------------------
+
 string query_id() {
     return getuid();
 }

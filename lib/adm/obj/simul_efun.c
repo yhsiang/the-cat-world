@@ -27,6 +27,12 @@ object assert_caller(mixed file) {
 
 //-----------------------------------------------------------------------------
 
+mixed default_value(mixed value, mixed default_value) {
+    return value ? value : default_value;
+}
+
+//-----------------------------------------------------------------------------
+
 varargs string file_name(object ob, int flag) {
     if (ob) {
         string name = efun::file_name(ob);
